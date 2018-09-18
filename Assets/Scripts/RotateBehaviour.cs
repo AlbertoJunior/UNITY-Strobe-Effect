@@ -40,6 +40,7 @@ public class RotateBehaviour : MonoBehaviour {
     // Use this for initialization
     void Start() {
         objStrobe.SetActive(flashOn);
+        rate = Time.fixedDeltaTime * timeScaledFlashStrobe;
 
         frameRateText.text = "Frame Rate: " + 1 / Time.fixedDeltaTime;
         timeText.text = "Time Refresh: " + Time.fixedDeltaTime;
@@ -47,71 +48,79 @@ public class RotateBehaviour : MonoBehaviour {
         maxValueText.text = "Max Degree: " + maxValueDegree;
         rotationText.text = "Rotation: " + transform.rotation.z;
         actuallyValue.text = "Actually: " + rotateDegree;
+        strobeText.text = "Strobe Active: " + strobeActive;
+        delayFlashText.text = "Delay Flash: " + timeScaledFlashStrobe + " (" + rate + ")";
 
-        rps = (rotateDegree / Time.fixedDeltaTime) / 360f;
+        rps = Mathf.Abs((rotateDegree / Time.fixedDeltaTime) / 360f);
         rpsText.text = "RPS/Hz: " + rps;
+    }
+
+    public void inputS() {
+        strobeActive = !strobeActive;
+        strobeText.text = "Strobe Active: " + strobeActive;
+
+        //strobe off
+        if (!strobeActive) {
+            //hide object
+            objStrobe.SetActive(false);
+            flashOn = false;
+        }
+    }
+
+    public void inputSpace() {
+        start = !start;
+    }
+
+    public void inputRShift() {
+        automaticDegree = !automaticDegree;
+        automaticText.text = "Automatic: " + automaticDegree;
+    }
+
+    public void inputLShift() {
+        strobeConfig = !strobeConfig;
+        strobeConfigText.text = "L Shift: Strobe Config (" + strobeConfig + ")";
+    }
+
+    public void inputUpdateValue(int value) {
+        if (strobeConfig) {
+            timeScaledFlashStrobe += value;
+        }
+        else if (automaticDegree) {
+            maxValueDegree += value;
+        }
+        else {
+            rotateDegree += value;
+        }
     }
 
     void Update() {
         if (Input.GetKeyDown(KeyCode.Space))
-            start = !start;
+            inputSpace();
+    
+        if (Input.GetKeyDown(KeyCode.S)) 
+            inputS();
+        
 
-        if (Input.GetKeyDown(KeyCode.S)) {       
-            strobeActive = !strobeActive;
-            strobeText.text = "Strobe Active: " + strobeActive;
-            
-            //strobe off
-            if (!strobeActive) {
-                //hide object
-                objStrobe.SetActive(false);
-                flashOn = false;
-            }
-        }
+        if (Input.GetKeyDown(KeyCode.RightShift)) 
+            inputRShift();
+        
 
-        if (Input.GetKeyDown(KeyCode.RightShift)) {
-            automaticDegree = !automaticDegree;
-            automaticText.text = "Automatic: " + automaticDegree;
-        }
+        if (Input.GetKeyDown(KeyCode.LeftShift)) 
+            inputLShift();
 
-        if (Input.GetKeyDown(KeyCode.LeftShift)) {
-            strobeConfig = !strobeConfig;
-            strobeConfigText.text = "L Shift: Strobe Config (" + strobeConfig + ")";
-        }
 
-        if (strobeConfig) {
-            if (Input.GetKeyDown(KeyCode.RightArrow))
-                timeScaledFlashStrobe += 10;
-            else if (Input.GetKeyDown(KeyCode.LeftArrow))
-                timeScaledFlashStrobe -= 10;
-            else if (Input.GetKeyDown(KeyCode.UpArrow))
-                timeScaledFlashStrobe += 1;
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-                timeScaledFlashStrobe -= 1;
-        }
-        else if (automaticDegree) {
-            if (Input.GetKeyDown(KeyCode.RightArrow))
-                maxValueDegree += 10;
-            else if (Input.GetKeyDown(KeyCode.LeftArrow))
-                maxValueDegree -= 10;
-            else if (Input.GetKeyDown(KeyCode.UpArrow))
-                maxValueDegree += 1;
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-                maxValueDegree -= 1;
-        }
-        else {
-            if (Input.GetKeyDown(KeyCode.RightArrow))
-                rotateDegree += 10;
-            else if (Input.GetKeyDown(KeyCode.LeftArrow))
-                rotateDegree -= 10;
-            else if (Input.GetKeyDown(KeyCode.UpArrow))
-                rotateDegree += 1;
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-                rotateDegree -= 1;
-        }
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+            inputUpdateValue(10);
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+            inputUpdateValue(-10);
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+            inputUpdateValue(1);
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+            inputUpdateValue(-1);        
     }
 
     void FixedUpdate() {
-        rps = ((1f / Time.fixedDeltaTime) * actuallyDegree) / 360f;
+        rps = Mathf.Abs((actuallyDegree / Time.fixedDeltaTime) / 360f);
 
         rpsText.text = "RPS/Hz: " + rps;
         frameRateText.text = "Frame Rate: " + 1 / Time.fixedDeltaTime;
