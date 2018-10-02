@@ -15,7 +15,7 @@ public class RotateBehaviour : MonoBehaviour {
     public GameObject objStrobe;
     public bool strobeActive;
     [Tooltip("Flash per frame")]
-    public int timeScaledFlashStrobe = 1;
+    public float timeScaledFlashStrobe = 1;
 
     public float actuallyDegree;
     public float maxValueDegree;
@@ -49,7 +49,7 @@ public class RotateBehaviour : MonoBehaviour {
         rotationText.text = "Rotation: " + transform.rotation.z;
         actuallyValue.text = "Actually: " + rotateDegree;
         strobeText.text = "Strobe Active: " + strobeActive;
-        delayFlashText.text = "Delay Flash: " + timeScaledFlashStrobe + " (" + rate + ")";
+        delayFlashText.text = "Delay Flash: " + timeScaledFlashStrobe + " (" + 1/rate + ")";
 
         rps = Mathf.Abs((rotateDegree / Time.fixedDeltaTime) / 360f);
         rpsText.text = "RPS/Hz: " + rps;
@@ -83,7 +83,10 @@ public class RotateBehaviour : MonoBehaviour {
 
     public void inputUpdateValue(int value) {
         if (strobeConfig) {
-            timeScaledFlashStrobe += value;
+            float auxV = value / 10f;
+            timeScaledFlashStrobe += auxV;
+            if (timeScaledFlashStrobe < 0)
+                timeScaledFlashStrobe = 0;
         }
         else if (automaticDegree) {
             maxValueDegree += value;
@@ -129,7 +132,7 @@ public class RotateBehaviour : MonoBehaviour {
 
         if (strobeActive) {
             rate = Time.fixedDeltaTime * timeScaledFlashStrobe;
-            delayFlashText.text = "Delay Flash: " + timeScaledFlashStrobe + " (" + rate + ")";
+            delayFlashText.text = "Delay Flash: " + timeScaledFlashStrobe + " (" + 1/rate + ")";
 
             //is showing object
             if (flashOn) {
