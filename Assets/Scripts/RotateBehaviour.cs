@@ -67,21 +67,21 @@ public class RotateBehaviour : MonoBehaviour {
         }
     }
 
-    public void inputSpace() {
+    public void InputSpace() {
         start = !start;
     }
 
-    public void inputRShift() {
+    public void InputRShift() {
         automaticDegree = !automaticDegree;
         automaticText.text = "Automatic: " + automaticDegree;
     }
 
-    public void inputLShift() {
+    public void InputLShift() {
         strobeConfig = !strobeConfig;
         strobeConfigText.text = "L Shift: Strobe Config (" + strobeConfig + ")";
     }
 
-    public void inputUpdateValue(int value) {
+    public void InputUpdateValue(int value) {
         if (strobeConfig) {
             float auxV = value / 10f;
             timeScaledFlashStrobe += auxV;
@@ -98,28 +98,39 @@ public class RotateBehaviour : MonoBehaviour {
 
     void Update() {
         if (Input.GetKeyDown(KeyCode.Space))
-            inputSpace();
+            InputSpace();
     
         if (Input.GetKeyDown(KeyCode.S)) 
             inputS();
         
 
         if (Input.GetKeyDown(KeyCode.RightShift)) 
-            inputRShift();
+            InputRShift();
         
 
         if (Input.GetKeyDown(KeyCode.LeftShift)) 
-            inputLShift();
+            InputLShift();
 
 
         if (Input.GetKeyDown(KeyCode.RightArrow))
-            inputUpdateValue(10);
+            InputUpdateValue(10);
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
-            inputUpdateValue(-10);
+            InputUpdateValue(-10);
         else if (Input.GetKeyDown(KeyCode.UpArrow))
-            inputUpdateValue(1);
+            InputUpdateValue(1);
         else if (Input.GetKeyDown(KeyCode.DownArrow))
-            inputUpdateValue(-1);        
+            InputUpdateValue(-1);
+
+        if (Input.GetKeyDown(KeyCode.Keypad1))
+            rotateDegree = 90f;
+        else if (Input.GetKeyDown(KeyCode.Keypad2))
+            rotateDegree = 180f;
+        else if (Input.GetKeyDown(KeyCode.Keypad3))
+            rotateDegree = 270f;
+        else if (Input.GetKeyDown(KeyCode.Keypad4))
+            rotateDegree = 360f;
+        else if (Input.GetKeyDown(KeyCode.Keypad5))
+            rotateDegree = 450f;
     }
 
     void FixedUpdate() {
@@ -139,7 +150,7 @@ public class RotateBehaviour : MonoBehaviour {
                 //update count time variable
                 contFrameTime += Time.fixedDeltaTime;
 
-                if (contFrameTime >= rate) {       
+                if (contFrameTime >= rate) {
                     //hide object
                     flashOn = false;
                     //reset count time variable
